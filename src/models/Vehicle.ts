@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IVehicle extends Document {
+export interface IVehicle extends Omit<Document, 'model'> {
   customer: mongoose.Types.ObjectId;
   vin: string;
   licensePlate: string;

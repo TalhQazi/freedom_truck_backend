@@ -22,6 +22,8 @@ import settingsRoutes from './routes/settingsRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 
 import { errorHandler } from './middleware/errorHandler.js';
+import { connectDB } from './config/db.js';
+import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,6 +40,18 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan('dev'));
+
+// Ensure DB is connected for serverless environments (Vercel)
+app.use(async (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDB();
+    } catch (err) {
+      console.error('[DB] Serverless connection error:', err);
+    }
+  }
+  next();
+});
 
 // Static uploads directory
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
