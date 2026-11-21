@@ -19,7 +19,9 @@ export const login = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { emailOrEmployeeId, password } = req.body;
+    const emailOrEmployeeId =
+      req.body.emailOrEmployeeId || req.body.email || req.body.username || req.body.employeeId;
+    const { password } = req.body;
 
     if (!emailOrEmployeeId || !password) {
       throw new AppError('Please provide employee ID / email and password.', 400);
